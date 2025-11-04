@@ -1,0 +1,54 @@
+-- Drop tables if they already exist (for resetting)
+DROP TABLE IF EXISTS opening_hours;
+DROP TABLE IF EXISTS locations;
+DROP TABLE IF EXISTS menu_items;
+DROP TABLE IF EXISTS menu_categories;
+
+-- MENU CATEGORIES
+CREATE TABLE menu_categories (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL UNIQUE,
+  sort_order INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- MENU ITEMS
+CREATE TABLE menu_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  category_id INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT,
+  image TEXT,
+  is_available BOOLEAN DEFAULT TRUE,
+  is_seasonal BOOLEAN DEFAULT FALSE,
+  is_vegan BOOLEAN DEFAULT FALSE,
+  is_gluten_free BOOLEAN DEFAULT FALSE,
+  price REAL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (category_id) REFERENCES menu_categories(id) ON DELETE CASCADE
+);
+
+-- LOCATIONS
+CREATE TABLE locations (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  address TEXT NOT NULL,
+  city TEXT NOT NULL,
+  state TEXT NOT NULL,
+  postal_code TEXT NOT NULL,
+  phone TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- OPENING HOURS
+CREATE TABLE opening_hours (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  location_id INTEGER NOT NULL,
+  day TEXT NOT NULL,
+  opens_at TEXT NOT NULL,
+  closes_at TEXT NOT NULL,
+  FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
+);
