@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic>=2
+pydantic-settings
