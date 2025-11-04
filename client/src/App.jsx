@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [menu, setMenu] = useState([]);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/categories/with-items")
+      .then((res) => res.json())
+      .then((data) => setMenu(data))
+      .catch((err) => console.error("Error fetching menu:", err));
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div style={{ fontFamily: "system-ui, sans-serif", padding: 24 }}>
+      <h1>☕ Coffee Shop Menu</h1>
 
-export default App
+      {menu.length === 0 && <p>Loading menu...</p>}
+
+      {menu.map((cat) => (
+        <section key={cat.id} style={{ marginTop: 24 }}>
+          <h2>{cat.name}</h2>
+          <ul style={{ listStyle: "none", padding: 0 }}>
+            {cat.items.map((item) => (
+              <li
+                key={item.id}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "8px 0",
+                  borderBottom: "1px solid #eee",
+                }}
+              >
+                <div>
+                  <strong>{item.name}</strong>
+                  <p style={{ margin: "4px 0", color: "#555" }}>
+                    {item.description}
+                  </p>
+                </div>
+                <span>${item.price?.toFixed(2)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}
